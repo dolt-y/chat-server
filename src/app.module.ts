@@ -1,24 +1,30 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { AuthService } from './auth/auth/auth.service';
-import { JwtAuthGuard } from './auth/auth/jwt-auth.guard';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '12345678',
-      database: 'chat',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false, // 在生产环境中请设置为 false
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
-    UsersModule,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'mysql',
+        host: process.env.DB_HOST,
+        port: 3306,
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE,
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: false,
+        logging: process.env.NODE_ENV !== 'production',
+      }),
+    }),
+    AuthModule,
+    UserModule,
   ],
-  controllers: [AppController],
-  providers: [AuthService, JwtAuthGuard],
 })
 export class AppModule {}
