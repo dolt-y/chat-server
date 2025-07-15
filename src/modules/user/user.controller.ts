@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
-import { UpdateUserDto } from '../../shared/dto/update-user.dto';
+import { UpdateUserDto } from '../../shared/dto/user/update-user.dto';
 import { Request } from 'express';
 
 @Controller('users')

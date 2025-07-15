@@ -29,8 +29,8 @@ async function bootstrap() {
 
   // Swagger配置
   const config = new DocumentBuilder()
-    .setTitle('Auth API')
-    .setDescription('Authentication and User Management API')
+    .setTitle('CHAT API')
+    .setDescription('聊天应用后端API文档')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

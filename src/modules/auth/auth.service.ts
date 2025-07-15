@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../shared/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { RegisterDto } from '../../shared/dto/register.dto';
-import { LoginDto } from '../../shared/dto/login.dto';
-
+import { RegisterDto } from '../../shared/dto/user/register.dto';
+import { LoginDto } from '../../shared/dto/user/login.dto';
+import ValidateDto from '../../shared/interfaces/validate';
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,11 +15,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(
+    username: string,
+    pass: string,
+  ): Promise<ValidateDto | null> {
     const user = await this.userRepository.findOne({ where: { username } });
     if (user && (await bcrypt.compare(pass, user.password))) {
-      const { password, ...result } = user;
-      return result;
+      return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      };
     }
     return null;
   }
@@ -51,21 +57,19 @@ export class AuthService {
     const existingUser = await this.userRepository.findOne({
       where: [{ username: registerDto.username }, { email: registerDto.email }],
     });
-
     if (existingUser) {
       throw new UnauthorizedException('Username or email already exists');
     }
-
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const newUser = this.userRepository.create({
       ...registerDto,
       password: hashedPassword,
       status: 'offline',
     });
-
     await this.userRepository.save(newUser);
-    const { password, ...result } = newUser;
-    return result;
+    return {
+      message: 'Registration successful',
+    };
   }
 
   async logout(userId: number) {

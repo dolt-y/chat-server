@@ -4,10 +4,13 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
 } from 'typeorm';
+import { Group } from './Group.entity';
 
 @Entity('user')
 export class User {
+  [x: string]: any;
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,15 +29,15 @@ export class User {
   @Column({ nullable: true })
   avatar_url: string;
 
+  @Column({ nullable: true })
+  bio: string;
+
   @Column({
     type: 'enum',
-    enum: ['online', 'offline', 'away'],
+    enum: ['online', 'offline', 'away', 'busy'],
     default: 'offline',
   })
-  status: 'online' | 'offline' | 'away';
-
-  @Column({ type: 'datetime', nullable: true })
-  last_login: Date;
+  status: 'online' | 'offline' | 'away' | 'busy';
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -45,4 +48,8 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updated_at: Date;
+
+  @ManyToMany(() => Group, (group) => group.members)
+  groups: Group[];
+  receivedMessages: any;
 }

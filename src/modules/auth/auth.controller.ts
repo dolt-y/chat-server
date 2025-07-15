@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from '../../shared/dto/register.dto';
-import { LoginDto } from '../../shared/dto/login.dto';
+import { RegisterDto } from '../../shared/dto/user/register.dto';
+import { LoginDto } from '../../shared/dto/user/login.dto';
 import { LocalAuthGuard } from '../../core/guards/local-auth.guard';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { Request } from 'express';
