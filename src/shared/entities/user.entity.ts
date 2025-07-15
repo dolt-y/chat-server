@@ -5,12 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
+  OneToMany,
 } from 'typeorm';
 import { Group } from './Group.entity';
+import { Chat } from './chat.entity';
+import { Friendship } from './Friendship.entity';
 
 @Entity('user')
 export class User {
-  [x: string]: any;
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -39,6 +41,9 @@ export class User {
   })
   status: 'online' | 'offline' | 'away' | 'busy';
 
+  @Column({ type: 'datetime', nullable: true })
+  last_login: Date;
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
@@ -51,5 +56,16 @@ export class User {
 
   @ManyToMany(() => Group, (group) => group.members)
   groups: Group[];
-  receivedMessages: any;
+
+  @OneToMany(() => Chat, (chat) => chat.sender)
+  sentMessages: Chat[];
+
+  @OneToMany(() => Chat, (chat) => chat.receiver)
+  receivedMessages: Chat[];
+
+  @OneToMany(() => Friendship, (friendship) => friendship.user)
+  friendships: Friendship[];
+
+  @OneToMany(() => Friendship, (friendship) => friendship.friend)
+  friends: Friendship[];
 }

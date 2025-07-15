@@ -27,5 +27,5 @@ export class Group {
   members: User[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  created_at: Date; // 确保使用正确的默认值
 }

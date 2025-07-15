@@ -17,8 +17,8 @@ export class RegisterDto {
   @IsEmail()
   email?: string;
 
-  @ApiProperty({ description: '手机号', required: false })
-  @IsOptional()
-  @IsString()
-  phone?: string;
+  // @ApiProperty({ description: '手机号', required: false })
+  // @IsOptional()
+  // @IsString()
+  // phone?: string;
 }

@@ -3,9 +3,11 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToMany,
   CreateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Message } from './Message.entity';
 
 @Entity('chat')
 export class Chat {
@@ -33,4 +35,7 @@ export class Chat {
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
+
+  @OneToMany(() => Message, (message) => message.chat)
+  messages: Message[]; // 表示与该聊天相关的消息
 }

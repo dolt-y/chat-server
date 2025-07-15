@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -35,12 +40,10 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
     await this.userRepository.update(user.id, {
       last_login: new Date(),
       status: 'online',
     });
-
     const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
@@ -58,7 +61,7 @@ export class AuthService {
       where: [{ username: registerDto.username }, { email: registerDto.email }],
     });
     if (existingUser) {
-      throw new UnauthorizedException('Username or email already exists');
+      throw new HttpException('用户或邮箱已存在', HttpStatus.BAD_REQUEST);
     }
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const newUser = this.userRepository.create({
@@ -68,12 +71,12 @@ export class AuthService {
     });
     await this.userRepository.save(newUser);
     return {
-      message: 'Registration successful',
+      message: '注册成功',
     };
   }
 
   async logout(userId: number) {
     await this.userRepository.update(userId, { status: 'offline' });
-    return { message: 'Logout successful' };
+    return { message: '登出成功' };
   }
 }

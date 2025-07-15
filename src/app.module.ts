@@ -19,7 +19,7 @@ import { UserModule } from './modules/user/user.module';
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: false,
         logging: process.env.NODE_ENV !== 'production',
       }),
     }),
