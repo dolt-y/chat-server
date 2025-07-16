@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../../shared/dto/user/register.dto';
 import { LoginDto } from '../../shared/dto/user/login.dto';
 import ValidateDto from '../../shared/interfaces/validate';
+import { ResponseDto } from 'src/shared/dto/common/response.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -38,14 +34,14 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      return new ResponseDto(false, '用户名或密码错误', null);
     }
     await this.userRepository.update(user.id, {
       last_login: new Date(),
       status: 'online',
     });
     const payload = { username: user.username, sub: user.id };
-    return {
+    return new ResponseDto(true, '登录成功', {
       access_token: this.jwtService.sign(payload),
       user: {
         id: user.id,
@@ -53,7 +49,7 @@ export class AuthService {
         email: user.email,
         status: 'online',
       },
-    };
+    });
   }
 
   async register(registerDto: RegisterDto) {
@@ -61,7 +57,7 @@ export class AuthService {
       where: [{ username: registerDto.username }, { email: registerDto.email }],
     });
     if (existingUser) {
-      throw new HttpException('用户或邮箱已存在', HttpStatus.BAD_REQUEST);
+      return new ResponseDto(false, '用户名或邮箱已存在', null);
     }
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const newUser = this.userRepository.create({
@@ -70,13 +66,11 @@ export class AuthService {
       status: 'offline',
     });
     await this.userRepository.save(newUser);
-    return {
-      message: '注册成功',
-    };
+    return new ResponseDto(true, '注册成功', null);
   }
 
   async logout(userId: number) {
     await this.userRepository.update(userId, { status: 'offline' });
-    return { message: '登出成功' };
+    return new ResponseDto(true, '登出成功', null);
   }
 }

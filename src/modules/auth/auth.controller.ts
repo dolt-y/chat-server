@@ -11,14 +11,13 @@ import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '用户注册' })
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '用户登录' })
   @Post('login')
   async login(@Body() loginDto: LoginDto) {

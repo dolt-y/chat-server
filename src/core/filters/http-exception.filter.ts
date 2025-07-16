@@ -28,10 +28,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
         'Internal server error';
     }
     response.status(status).json({
-      statusCode: status,
+      success: false,
+      message: message,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message,
     });
   }
 }
