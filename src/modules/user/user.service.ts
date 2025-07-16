@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../shared/entities/user.entity';
 import { PaginationDto } from 'src/shared/dto/Pagination/pagination.dto';
+import { UpdateUserDto } from 'src/shared/dto/user/update-user.dto';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -21,7 +23,7 @@ export class UserService {
 
   async updateProfile(
     id: number,
-    updateData: Partial<User>,
+    updateData: Partial<UpdateUserDto>,
   ): Promise<User | null> {
     await this.userRepository.update(id, updateData);
     return this.userRepository.findOne({ where: { id } });

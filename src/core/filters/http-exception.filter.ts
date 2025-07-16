@@ -6,22 +6,31 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Request } from 'express'; // 确保导入 Request 类型
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
     const status = exception.getStatus
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const message = exception.message || 'Internal server error';
-
+    const responseBody = exception.getResponse();
+    let message: string;
+    if (typeof responseBody === 'string') {
+      message = responseBody;
+    } else {
+      message =
+        (responseBody as { message?: string }).message ||
+        'Internal server error';
+    }
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),
-      path: ctx.getRequest<Request>().url,
+      path: request.url,
       message,
     });
   }

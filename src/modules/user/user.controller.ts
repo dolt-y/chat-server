@@ -5,9 +5,8 @@ import {
   Req,
   Body,
   Param,
-  HttpException,
-  HttpStatus,
   Post,
+  Logger,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
@@ -15,18 +14,14 @@ import { UpdateUserDto } from '../../shared/dto/user/update-user.dto';
 import { Request } from 'express';
 import { User } from 'src/shared/entities/user.entity';
 import { PaginationDto } from 'src/shared/dto/Pagination/pagination.dto';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
@@ -39,7 +34,7 @@ export class UserController {
   }
 
   @Post('me')
-  @ApiOperation({ summary: '更新用户个人信息' })
+  @ApiOperation({ summary: '更新用户信息' })
   async updateProfile(
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
@@ -54,19 +49,17 @@ export class UserController {
     if (user) {
       return user;
     }
-    throw new HttpException('没有找到该用户', HttpStatus.BAD_REQUEST);
+    return {
+      message: '用户不存在',
+    };
   }
 
   @Post('all')
   @ApiOperation({ summary: '获取所有用户信息' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of users retrieved successfully.',
-    type: [User],
-  })
   async getAllUsers(
     @Body() paginationDto: PaginationDto,
   ): Promise<{ users: User[]; total: number }> {
+    this.logger.log(paginationDto);
     return this.userService.findAll(paginationDto);
   }
 }
