@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
+import { FriendshipModule } from './modules/firend/Friend.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModule } from './modules/user/user.module';
         logging: process.env.NODE_ENV !== 'production',
       }),
     }),
+    FriendshipModule,
     AuthModule,
     UserModule,
   ],

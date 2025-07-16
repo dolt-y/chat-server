@@ -15,14 +15,22 @@ import { UpdateUserDto } from '../../shared/dto/user/update-user.dto';
 import { Request } from 'express';
 import { User } from 'src/shared/entities/user.entity';
 import { PaginationDto } from 'src/shared/dto/Pagination/pagination.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  /* 根据ID查找用户信息 */
   @Get('me')
+  @ApiOperation({ summary: '根据ID查找用户信息' })
   async getProfile(@Req() req: Request) {
     const user = await this.userService.findOne(
       (req.user as { id: number }).id,
@@ -30,8 +38,8 @@ export class UserController {
     return user;
   }
 
-  /* 更新用户信息 */
   @Post('me')
+  @ApiOperation({ summary: '更新用户个人信息' })
   async updateProfile(
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
@@ -39,18 +47,23 @@ export class UserController {
     return this.userService.updateProfile(userId, updateUserDto);
   }
 
-  /* 根据用户名查找用户信息 */
   @Get(':username')
+  @ApiOperation({ summary: '根据用户名查找用户信息' })
   async getUserByUsername(@Param('username') username: string) {
     const user = await this.userService.findByUsername(username);
     if (user) {
       return user;
     }
-    return new HttpException('没有找到该用户', HttpStatus.BAD_REQUEST);
+    throw new HttpException('没有找到该用户', HttpStatus.BAD_REQUEST);
   }
 
-  /* 获取所有用户信息 */
   @Post('all')
+  @ApiOperation({ summary: '获取所有用户信息' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of users retrieved successfully.',
+    type: [User],
+  })
   async getAllUsers(
     @Body() paginationDto: PaginationDto,
   ): Promise<{ users: User[]; total: number }> {
