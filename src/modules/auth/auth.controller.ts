@@ -17,7 +17,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '用户登录' })
   @Post('login')
   async login(@Body() loginDto: LoginDto) {

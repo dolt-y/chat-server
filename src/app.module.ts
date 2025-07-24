@@ -6,6 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { FriendshipModule } from './modules/firend/Friend.module';
 import { ResponseInterceptor } from './core/response/response.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ChatModule } from './modules/chat/chat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +29,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     FriendshipModule,
     AuthModule,
     UserModule,
+    ChatModule,
   ],
   providers: [
     {

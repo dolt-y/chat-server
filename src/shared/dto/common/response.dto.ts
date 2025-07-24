@@ -1,4 +1,4 @@
-export class ResponseDto<T, U = {}> {
+export class ResponseDto<T, U = object> {
   success: boolean;
   message: string;
   data?: T;

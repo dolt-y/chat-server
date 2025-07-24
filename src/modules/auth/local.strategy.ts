@@ -10,7 +10,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
     super({ usernameField: 'username' });
   }
-
   async validate(
     username: string,
     password: string,
@@ -18,6 +17,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateUser(username, password);
     if (!user) {
       return new ResponseDto(false, '用户名或密码错误', null);
+    }
+    if (user.status === 'online') {
+      return new ResponseDto(false, '用户当前已在其他设备登录', null);
     }
     return user;
   }
