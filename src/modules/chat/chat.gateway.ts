@@ -8,9 +8,9 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { MessageService } from './message.service'; // 引入消息服务
-import { ChatService } from './chat.service'; // 引入聊天服务
-import { Logger } from '@nestjs/common'; // 导入 Logger
+import { MessageService } from './message.service';
+import { ChatService } from './chat.service';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -51,8 +51,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(
       `Received message from ${data.senderId} in chat ${data.chatId}: ${data.content}`,
     );
-
-    // 查找聊天记录
+    // 查找聊天对象,避免当会话不存在时发送消息
     const chat = await this.chatService.findChatById(data.chatId);
     if (!chat) {
       this.logger.error(`Chat not found for ID: ${data.chatId}`);
@@ -60,13 +59,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     const newMessage = await this.messageService.createMessage(
       data.content,
-      data.sender_id,
+      data.senderId,
       chat,
     );
     // 向聊天房间广播新消息
     this.server.to(data.chatId.toString()).emit('message', {
       content: newMessage.content,
-      senderId: data.sender_id,
+      senderId: data.senderId,
       chatId: chat.id,
       createdAt: newMessage.created_at,
     });

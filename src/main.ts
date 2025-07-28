@@ -8,7 +8,7 @@ import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.enableShutdownHooks();
   // 全局验证管道
   app.useGlobalPipes(
     new ValidationPipe({

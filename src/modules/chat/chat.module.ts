@@ -5,6 +5,7 @@ import { MessageService } from './message.service';
 import { ChatService } from './chat.service';
 import { Message } from '../../shared/entities/Message.entity';
 import { Chat } from 'src/shared/entities/chat.entity';
+import { ChatController } from './chat.controller';
 
 @Module({
   imports: [
@@ -13,5 +14,6 @@ import { Chat } from 'src/shared/entities/chat.entity';
   ],
   providers: [ChatGateway, MessageService, ChatService],
   exports: [MessageService],
+  controllers: [ChatController],
 })
 export class ChatModule {}
