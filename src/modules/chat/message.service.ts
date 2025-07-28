@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from '../../shared/entities/Message.entity';
 import { Chat } from 'src/shared/entities/chat.entity';
+import { ResponseDto } from '../../shared/dto/common/response.dto';
+import { MessageDto } from 'src/shared/dto/chat/MessageDto';
 
 @Injectable()
 export class MessageService {
@@ -25,29 +27,43 @@ export class MessageService {
     });
     return this.messageRepository.save(message);
   }
-
-  async getMessagesByChatId(chatId: number): Promise<any[]> {
+  async getMessagesByChatId(
+    chatId: number,
+  ): Promise<ResponseDto<MessageDto[]>> {
     this.logger.log(`Fetching messages for chat ID: ${chatId}`);
 
-    // 使用 createQueryBuilder 进行连表查询
     const messages = await this.messageRepository
       .createQueryBuilder('m')
-      .innerJoinAndSelect('m.chat', 'c') // 连接 chat 表
-      .innerJoinAndSelect('c.sender', 'u_sender') // 连接发送者
-      .innerJoinAndSelect('c.receiver', 'u_receiver') // 连接接收者
-      .where('c.id = :chatId', { chatId }) // 使用 chat 表的 ID 进行过滤
+      .select([
+        'm.id as messageId',
+        'm.content AS content',
+        'm.created_at AS createdAt',
+        'c.sender_id AS senderId',
+        'u_sender.username AS senderUsername',
+        'c.receiver_id AS receiverId',
+        'u_receiver.username AS receiverUsername',
+      ])
+      .innerJoin('m.chat', 'c')
+      .innerJoin('c.sender', 'u_sender')
+      .innerJoin('c.receiver', 'u_receiver')
+      .where('c.id = :chatId', { chatId })
       .orderBy('m.created_at', 'ASC')
-      .getMany();
+      .getRawMany();
 
-    // 返回消息和发送者、接收者信息
-    return messages.map((message) => ({
-      messageId: message.id,
+    const responseData: MessageDto[] = messages.map((message: MessageDto) => ({
+      messageId: message.messageId,
       content: message.content,
-      createdAt: message.created_at,
-      senderId: message.chat.sender.id, // 从 chat 表中获取发送者 ID
-      senderUsername: message.chat.sender.username, // 发送者用户名
-      receiverId: message.chat.receiver.id, // 从 chat 表中获取接收者 ID
-      receiverUsername: message.chat.receiver.username, // 接收者用户名
+      createdAt: message.createdAt,
+      senderId: message.senderId,
+      senderUsername: message.senderUsername,
+      receiverId: message.receiverId,
+      receiverUsername: message.receiverUsername,
     }));
+
+    return new ResponseDto<MessageDto[]>(
+      true,
+      'Messages fetched successfully',
+      responseData,
+    );
   }
 }

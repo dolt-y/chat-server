@@ -19,7 +19,7 @@ export class Message {
   content: string;
 
   @Column({ nullable: true })
-  message_type: string; // 消息类型
+  message_type: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

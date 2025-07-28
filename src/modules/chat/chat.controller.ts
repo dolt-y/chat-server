@@ -18,9 +18,6 @@ export class ChatController {
     const messages = await this.messageService.getMessagesByChatId(
       params.chatId,
     );
-    return {
-      messages,
-      hasMore: messages.length >= (params.pageSize || 20),
-    };
+    return messages;
   }
 }

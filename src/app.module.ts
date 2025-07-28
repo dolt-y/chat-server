@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
-import { FriendshipModule } from './modules/firend/Friend.module';
+import { FriendshipModule } from './modules/friend/Friend.module';
 import { ResponseInterceptor } from './core/response/response.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ChatModule } from './modules/chat/chat.module';
