@@ -27,11 +27,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   handleConnection(client: any) {
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.log(`客户端连接成功: ${client.id}`);
   }
 
   handleDisconnect(client: any) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`客户端断开连接: ${client.id}`);
   }
 
   @SubscribeMessage('joinChat')
@@ -40,7 +40,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: any,
   ) {
     client.join(data.chatId.toString());
-    this.logger.log(`Client ${client.id} joined chat: ${data.chatId}`);
+    this.logger.log(`加入聊天房间: ${data.chatId}`);
   }
 
   @SubscribeMessage('message')
@@ -48,29 +48,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { chatId: number; senderId: number; content: string },
     @ConnectedSocket() client: any,
   ) {
-    this.logger.log(
-      `Received message from ${data.senderId} in chat ${data.chatId}: ${data.content}`,
-    );
-    // 查找聊天对象,避免当会话不存在时发送消息
+    this.logger.log(`收到消息: ${data.content}`);
     const chat = await this.chatService.findChatById(data.chatId);
     if (!chat) {
-      this.logger.error(`Chat not found for ID: ${data.chatId}`);
-      throw new Error('Chat not found');
+      this.logger.error(`会话不存在: ${data.chatId}`);
+      throw new Error('会话不存在');
     }
     const newMessage = await this.messageService.createMessage(
       data.content,
       data.senderId,
       chat,
     );
-    // 向聊天房间广播新消息
     this.server.to(data.chatId.toString()).emit('message', {
       content: newMessage.content,
       senderId: data.senderId,
       chatId: chat.id,
       createdAt: newMessage.created_at,
     });
-    this.logger.log(
-      `Message sent to chat ${data.chatId}: ${newMessage.content}`,
-    );
+    this.logger.log(`向聊天房间广播消息: ${newMessage.content}`);
   }
 }

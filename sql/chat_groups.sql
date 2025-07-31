@@ -1,0 +1,10 @@
+CREATE TABLE chat_groups (
+    id INT NOT NULL AUTO_INCREMENT COMMENT '唯一标识每个群组',
+    chat_id INT NOT NULL COMMENT '关联的会话 ID',
+    group_name VARCHAR(255) NOT NULL COMMENT '群组名称',
+    avatar VARCHAR(255) DEFAULT NULL COMMENT '群组头像 URL',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '群组创建时间',
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '群组最后更新时间',
+    FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB COMMENT='创建群组表，用于存储群组的相关信息';

@@ -14,7 +14,6 @@ export class ChatController {
   @ApiOperation({ summary: '获取聊天记录' })
   @Post('/messages')
   async getMessages(@Body() params: GetMessageDto) {
-    this.logger.log(`Fetching messages for chat ID: ${params.chatId}`);
     const messages = await this.messageService.getMessagesByChatId(
       params.chatId,
     );

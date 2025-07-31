@@ -30,8 +30,6 @@ export class MessageService {
   async getMessagesByChatId(
     chatId: number,
   ): Promise<ResponseDto<MessageDto[]>> {
-    this.logger.log(`Fetching messages for chat ID: ${chatId}`);
-
     const messages = await this.messageRepository
       .createQueryBuilder('m')
       .select([

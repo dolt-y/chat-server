@@ -13,4 +13,14 @@ export class ChatService {
   async findChatById(chatId: number): Promise<Chat | null> {
     return this.chatRepository.findOne({ where: { id: chatId } });
   }
+  async isUserInChat(chatId: number, senderId: number): Promise<boolean> {
+    const chat = await this.chatRepository.findOne({
+      where: { id: chatId },
+      relations: ['users'],
+    });
+    if (!chat) {
+      return false;
+    }
+    return chat.users && chat.users.some((user) => user.id === senderId);
+  }
 }

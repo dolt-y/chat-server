@@ -8,7 +8,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Group } from './Group.entity';
-import { Chat } from './chat.entity';
 import { Friendship } from './Friendship.entity';
 
 @Entity('user')
@@ -56,12 +55,6 @@ export class User {
 
   @ManyToMany(() => Group, (group) => group.members)
   groups: Group[];
-
-  @OneToMany(() => Chat, (chat) => chat.sender)
-  sentMessages: Chat[];
-
-  @OneToMany(() => Chat, (chat) => chat.receiver)
-  receivedMessages: Chat[];
 
   @OneToMany(() => Friendship, (friendship) => friendship.user)
   friendships: Friendship[];
