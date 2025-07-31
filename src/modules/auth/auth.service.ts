@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../../shared/dto/user/register.dto';
 import { LoginDto } from '../../shared/dto/user/login.dto';
 import ValidateDto from '../../shared/interfaces/validate';
-import { ResponseDto } from 'src/shared/dto/common/response.dto';
+import { ResponseDto } from '../../shared/dto/common/response.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -38,7 +38,7 @@ export class AuthService {
       return new ResponseDto(false, '用户名或密码错误', null);
     }
     await this.userRepository.update(user.id, {
-      last_login: new Date(),
+      lastLogin: new Date(),
       status: 'online',
     });
     const payload = { username: user.username, sub: user.id };
