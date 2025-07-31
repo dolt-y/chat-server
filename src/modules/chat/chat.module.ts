@@ -3,14 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatGateway } from './chat.gateway';
 import { MessageService } from './message.service';
 import { ChatService } from './chat.service';
-import { Message } from '../../shared/entities/Message.entity';
-import { Chat } from 'src/shared/entities/chat.entity';
+import { Messages } from '../../shared/entities/Messages';
+import { Chats } from 'src/shared/entities/Chats';
 import { ChatController } from './chat.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Message]),
-    TypeOrmModule.forFeature([Chat]),
+    TypeOrmModule.forFeature([Messages]),
+    TypeOrmModule.forFeature([Chats]),
   ],
   providers: [ChatGateway, MessageService, ChatService],
   exports: [MessageService],

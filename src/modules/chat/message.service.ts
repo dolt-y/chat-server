@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Message } from '../../shared/entities/Message.entity';
-import { Chat } from 'src/shared/entities/chat.entity';
+import { Messages } from '../../shared/entities/Messages';
+import { Chats } from 'src/shared/entities/Chats';
 import { ResponseDto } from '../../shared/dto/common/response.dto';
 import { MessageDto } from 'src/shared/dto/chat/MessageDto';
 
@@ -11,15 +11,15 @@ export class MessageService {
   private readonly logger = new Logger(MessageService.name);
 
   constructor(
-    @InjectRepository(Message)
-    private readonly messageRepository: Repository<Message>,
+    @InjectRepository(Messages)
+    private readonly messageRepository: Repository<Messages>,
   ) {}
 
   async createMessage(
     content: string,
     senderId: number,
-    chat: Chat,
-  ): Promise<Message> {
+    chat: Chats,
+  ): Promise<Messages> {
     const message = this.messageRepository.create({
       content,
       chat,

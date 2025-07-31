@@ -8,8 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FriendshipService } from './Friendship.service';
-import { Friendship } from '../../shared/entities/Friendship.entity';
-import { User } from '../../shared/entities/user.entity';
+import { Friends } from '../../shared/entities/Friends';
+import { User } from '../../shared/entities/User';
 import { AddFriendDto } from 'src/shared/dto/friend/addFriend.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
@@ -22,14 +22,14 @@ export class FriendshipController {
 
   @ApiOperation({ summary: '添加好友' })
   @Post('add')
-  async addFriend(@Body() addFriendDto: AddFriendDto): Promise<Friendship> {
+  async addFriend(@Body() addFriendDto: AddFriendDto): Promise<Friends> {
     const { userId, friendId } = addFriendDto;
     return this.friendshipService.createFriendship(userId, friendId);
   }
 
   @ApiOperation({ summary: '获取好友列表' })
   @Get('list/:userId')
-  async getFriendships(@Param('userId') userId: number): Promise<Friendship[]> {
+  async getFriendships(@Param('userId') userId: number): Promise<Friends[]> {
     return this.friendshipService.getFriendships(userId);
   }
 
@@ -37,7 +37,7 @@ export class FriendshipController {
   @Get('info/:friendshipId')
   async getFriendInfo(
     @Param('friendshipId') friendshipId: number,
-  ): Promise<Friendship | null> {
+  ): Promise<Friends | null> {
     return this.friendshipService.getFriendInfo(friendshipId);
   }
 

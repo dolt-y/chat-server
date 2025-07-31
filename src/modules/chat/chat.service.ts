@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Chat } from '../../shared/entities/chat.entity';
+import { Chats } from '../../shared/entities/Chats';
 
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(Chat)
-    private readonly chatRepository: Repository<Chat>,
+    @InjectRepository(Chats)
+    private readonly chatRepository: Repository<Chats>,
   ) {}
 
-  async findChatById(chatId: number): Promise<Chat | null> {
+  async findChatById(chatId: number): Promise<Chats | null> {
     return this.chatRepository.findOne({ where: { id: chatId } });
   }
   async isUserInChat(chatId: number, senderId: number): Promise<boolean> {
