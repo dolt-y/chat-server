@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Friends } from '../../shared/entities/Friends';
-import { User } from '../../shared/entities/User';
+import { Friends } from '../../shared/entities/Friends.entity';
+import { User } from '../../shared/entities/User.entity';
 
 @Injectable()
 export class FriendshipService {
@@ -15,9 +15,8 @@ export class FriendshipService {
 
   async createFriendship(userId: number, friendId: number): Promise<Friends> {
     const friendship = this.friendshipRepository.create({
-      user: { id: userId } as User,
-      friend: { id: friendId } as User,
-      status: 'pending',
+      user: { id: userId },
+      friend: { id: friendId },
     });
     return this.friendshipRepository.save(friendship);
   }

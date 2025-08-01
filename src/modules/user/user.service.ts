@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../shared/entities/User';
+import { User } from '../../shared/entities/User.entity';
 import { PaginationDto } from 'src/shared/dto/Pagination/pagination.dto';
 import { UpdateUserDto } from 'src/shared/dto/user/update-user.dto';
 

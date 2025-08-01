@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ChatGroups } from './ChatGroups';
-import { ConversationMembers } from './ConversationMembers';
-import { Messages } from './Messages';
+import { ChatGroups } from './ChatGroups.entity';
+import { ConversationMembers } from './ConversationMembers.entity';
+import { Messages } from './Messages.entity';
 
 @Entity('chats', { schema: 'chat' })
 export class Chats {

@@ -63,7 +63,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       content: newMessage.content,
       senderId: data.senderId,
       chatId: chat.id,
-      createdAt: newMessage.created_at,
+      createdAt: newMessage.createdAt,
     });
     this.logger.log(`向聊天房间广播消息: ${newMessage.content}`);
   }

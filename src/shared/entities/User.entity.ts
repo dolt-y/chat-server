@@ -5,9 +5,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ConversationMembers } from './ConversationMembers';
-import { Friends } from './Friends';
-import { Messages } from './Messages';
+import { ConversationMembers } from './ConversationMembers.entity';
+import { Friends } from './Friends.entity';
+import { Messages } from './Messages.entity';
 
 @Index('username', ['username'], { unique: true })
 @Entity('user', { schema: 'chat' })

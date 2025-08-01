@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Chats } from '../../shared/entities/Chats';
+import { Chats } from '../../shared/entities/Chats.entity';
 
 @Injectable()
 export class ChatService {
@@ -13,14 +13,14 @@ export class ChatService {
   async findChatById(chatId: number): Promise<Chats | null> {
     return this.chatRepository.findOne({ where: { id: chatId } });
   }
-  async isUserInChat(chatId: number, senderId: number): Promise<boolean> {
-    const chat = await this.chatRepository.findOne({
-      where: { id: chatId },
-      relations: ['users'],
-    });
-    if (!chat) {
-      return false;
-    }
-    return chat.users && chat.users.some((user) => user.id === senderId);
-  }
+  // async isUserInChat(chatId: number, senderId: number): Promise<boolean> {
+  //   const chat = await this.chatRepository.findOne({
+  //     where: { id: chatId },
+  //     relations: ['users'],
+  //   });
+  //   if (!chat) {
+  //     return false;
+  //   }
+  //   // return chat.users && chat.users.some((user) => user.id === senderId);
+  // }
 }

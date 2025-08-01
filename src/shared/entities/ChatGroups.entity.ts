@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Chats } from './Chats';
+import { Chats } from './Chats.entity';
 
 @Index('chat_id', ['chatId'], {})
 @Entity('chat_groups', { schema: 'chat' })

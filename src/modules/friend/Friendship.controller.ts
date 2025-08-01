@@ -8,8 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FriendshipService } from './Friendship.service';
-import { Friends } from '../../shared/entities/Friends';
-import { User } from '../../shared/entities/User';
+import { Friends } from '../../shared/entities/Friends.entity';
+import { User } from '../../shared/entities/User.entity';
 import { AddFriendDto } from 'src/shared/dto/friend/addFriend.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';

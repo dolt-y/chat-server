@@ -12,7 +12,7 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { UpdateUserDto } from '../../shared/dto/user/update-user.dto';
 import { Request } from 'express';
-import { User } from 'src/shared/entities/User';
+import { User } from 'src/shared/entities/User.entity';
 import { PaginationDto } from 'src/shared/dto/Pagination/pagination.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Messages } from '../../shared/entities/Messages';
-import { Chats } from 'src/shared/entities/Chats';
+import { Messages } from '../../shared/entities/Messages.entity';
+import { Chats } from 'src/shared/entities/Chats.entity';
 import { ResponseDto } from '../../shared/dto/common/response.dto';
 import { MessageDto } from 'src/shared/dto/chat/MessageDto';
 
@@ -23,7 +23,6 @@ export class MessageService {
     const message = this.messageRepository.create({
       content,
       chat,
-      message_type: 'text',
     });
     return this.messageRepository.save(message);
   }
