@@ -1,3 +1,7 @@
+/**
+ * @file jwt.strategy.ts
+ * @description 验证 JWT 策略
+ */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';

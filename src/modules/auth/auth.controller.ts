@@ -5,8 +5,7 @@ import { LoginDto } from '../../shared/dto/user/login.dto';
 import { LocalAuthGuard } from '../../core/guards/local-auth.guard';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { Request } from 'express';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ResponseDto } from 'src/shared/dto/common/response.dto';
+import { ApiOperation } from '@nestjs/swagger';
 import { ApiResponseWithDescriptions } from 'src/shared/constant/response.enum';
 
 @Controller('auth')
@@ -16,7 +15,6 @@ export class AuthController {
 
   @ApiOperation({ summary: '用户注册' })
   @Post('register')
-  @ApiResponse({ status: 200, type: ResponseDto })
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
@@ -29,7 +27,6 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: '用户登出' })
   @Post('logout')
   async logout(@Req() req: Request) {

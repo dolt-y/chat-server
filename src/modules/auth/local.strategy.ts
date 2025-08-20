@@ -1,3 +1,7 @@
+/**
+ * @file: local.strategy.ts
+ * @description: 本地验证策略
+ */
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';

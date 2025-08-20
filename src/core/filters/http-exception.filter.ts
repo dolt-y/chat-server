@@ -1,3 +1,7 @@
+/**
+ * @file: http-exception.filter.ts
+ * @description: 全局异常过滤器
+ */
 import {
   ExceptionFilter,
   Catch,

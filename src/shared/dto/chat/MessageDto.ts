@@ -4,6 +4,6 @@ export interface MessageDto {
   createdAt: Date; // 消息创建时间
   senderId: number; // 发送者 ID
   senderUsername: string; // 发送者用户名
-  receiverId: number; // 接收者 ID
-  receiverUsername: string; // 接收者用户名
+  isRead: boolean | null; // 是否已读（与实体保持一致）
+  type: string; // 消息类型
 }

@@ -1,3 +1,7 @@
+/**
+ * @file: response.interceptor.ts
+ * @description: 响应拦截器 nest默认响应成功为204
+ */
 import {
   Injectable,
   NestInterceptor,
