@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Messages } from '../../shared/entities/Messages.entity';
 import { Chats } from 'src/shared/entities/Chats.entity';
 import { ResponseDto } from '../../shared/dto/common/response.dto';
-import { MessageDto } from 'src/shared/dto/chat/MessageDto';
+import { MessageDto } from 'src/shared/dto/chat/response/MessageDto';
 
 @Injectable()
 export class MessageService {
@@ -26,6 +26,9 @@ export class MessageService {
     return this.messageRepository.save(message);
   }
 
+  /**
+   * @description 获取指定会话的消息列表
+   */
   async getMessagesByChatId(
     chatId: number,
   ): Promise<ResponseDto<MessageDto[]>> {
