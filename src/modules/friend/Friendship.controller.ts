@@ -3,7 +3,6 @@ import {
   Post,
   Body,
   Get,
-  Param,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -18,7 +17,7 @@ import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 @ApiBearerAuth()
 @Controller('friendships')
 export class FriendshipController {
-  constructor(private readonly friendshipService: FriendshipService) {}
+  constructor(private readonly friendshipService: FriendshipService) { }
 
   @ApiOperation({ summary: '添加好友' })
   @Post('add')
@@ -28,15 +27,17 @@ export class FriendshipController {
   }
 
   @ApiOperation({ summary: '获取好友列表' })
-  @Get('list/:userId')
-  async getFriendships(@Param('userId') userId: number): Promise<Friends[]> {
+  @Get('list')
+  async getFriendships(
+    @Query('userId') userId: number,
+  ): Promise<Friends[]> {
     return this.friendshipService.getFriendships(userId);
   }
 
   @ApiOperation({ summary: '获取好友信息' })
-  @Get('info/:friendshipId')
+  @Get('info')
   async getFriendInfo(
-    @Param('friendshipId') friendshipId: number,
+    @Query('friendshipId') friendshipId: number,
   ): Promise<Friends | null> {
     return this.friendshipService.getFriendInfo(friendshipId);
   }

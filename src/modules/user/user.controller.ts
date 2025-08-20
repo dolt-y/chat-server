@@ -2,16 +2,14 @@ import {
   Controller,
   Get,
   UseGuards,
-  Req,
   Body,
-  Param,
   Post,
   Logger,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { UpdateUserDto } from '../../shared/dto/user/update-user.dto';
-import { Request } from 'express';
 import { User } from 'src/shared/entities/User.entity';
 import { PaginationDto } from 'src/shared/dto/Pagination/pagination.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -22,15 +20,18 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiBearerAuth()
 export class UserController {
   private readonly logger = new Logger(UserController.name);
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get('me')
   @ApiOperation({ summary: '根据ID查找用户信息' })
-  async getProfile(@Req() req: Request) {
-    const user = await this.userService.findOne(
-      (req.user as { id: number }).id,
-    );
-    return user;
+  async getProfile(@Query('userId') userId: number) {
+    return await this.userService.findOne(userId);
+  }
+
+  @Get('info')
+  @ApiOperation({ summary: '根据用户名查找用户信息' })
+  async getUserByUsername(@Query('username') username: string) {
+    return await this.userService.findByUsername(username);
   }
 
   @Post('me')
@@ -38,20 +39,7 @@ export class UserController {
   async updateProfile(
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
-    const userId = updateUserDto.id;
-    return this.userService.updateProfile(userId, updateUserDto);
-  }
-
-  @Get(':username')
-  @ApiOperation({ summary: '根据用户名查找用户信息' })
-  async getUserByUsername(@Param('username') username: string) {
-    const user = await this.userService.findByUsername(username);
-    if (user) {
-      return user;
-    }
-    return {
-      message: '用户不存在',
-    };
+    return this.userService.updateProfile(updateUserDto.id, updateUserDto);
   }
 
   @Post('all')
@@ -59,7 +47,6 @@ export class UserController {
   async getAllUsers(
     @Body() paginationDto: PaginationDto,
   ): Promise<{ users: User[]; total: number }> {
-    this.logger.log(paginationDto);
     return this.userService.findAll(paginationDto);
   }
 }
