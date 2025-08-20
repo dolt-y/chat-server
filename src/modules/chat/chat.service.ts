@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Chats } from '../../shared/entities/Chats.entity';
 import { ConversationMembers } from '../../shared/entities/ConversationMembers.entity';
 import { Messages } from '../../shared/entities/Messages.entity';
 import { ChatListItemDto } from 'src/shared/dto/chat/response/ChatListItemDto';
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(Chats)
     @InjectRepository(ConversationMembers)
     private readonly conversationMembersRepository: Repository<ConversationMembers>,
     @InjectRepository(Messages)
