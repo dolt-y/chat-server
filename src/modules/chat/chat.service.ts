@@ -4,14 +4,23 @@ import { Repository } from 'typeorm';
 import { ConversationMembers } from '../../shared/entities/ConversationMembers.entity';
 import { Messages } from '../../shared/entities/Messages.entity';
 import { ChatListItemDto } from 'src/shared/dto/chat/response/ChatListItemDto';
+import { Chats } from 'src/shared/entities/Chats.entity';
 @Injectable()
 export class ChatService {
   constructor(
+    @InjectRepository(Chats)
+    private readonly chatsRepository: Repository<Chats>,
     @InjectRepository(ConversationMembers)
     private readonly conversationMembersRepository: Repository<ConversationMembers>,
     @InjectRepository(Messages)
     private readonly messagesRepository: Repository<Messages>,
   ) { }
+
+  async findChatById(chatId: number): Promise<Chats | null> {
+    return this.chatsRepository.findOne({
+      where: { id: chatId },
+    });
+  }
 
   async getUserChatsOptimized(userId: number): Promise<ChatListItemDto[]> {
     // 获取用户参与的所有会话基本信息

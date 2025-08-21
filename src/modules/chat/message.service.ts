@@ -5,6 +5,7 @@ import { Messages } from '../../shared/entities/Messages.entity';
 import { Chats } from 'src/shared/entities/Chats.entity';
 import { ResponseDto } from '../../shared/dto/common/response.dto';
 import { MessageDto } from 'src/shared/dto/chat/response/MessageDto';
+import { User } from 'src/shared/entities/User.entity';
 
 @Injectable()
 export class MessageService {
@@ -17,15 +18,22 @@ export class MessageService {
 
   async createMessage(
     content: string,
+    senderId: number,
     chat: Chats,
+    type: 'text' | 'image' | 'file' | 'video' | 'audio' = 'text',
   ): Promise<Messages> {
     const message = this.messageRepository.create({
       content,
-      chat,
+      senderId,
+      chatId: chat.id,
+      type,
     });
-    return this.messageRepository.save(message);
+    const savedMessage = await this.messageRepository.save(message);
+    return await this.messageRepository.findOneOrFail({
+      where: { id: savedMessage.id },
+      relations: ['sender'],
+    });
   }
-
   /**
    * @description 获取指定会话的消息列表
    */

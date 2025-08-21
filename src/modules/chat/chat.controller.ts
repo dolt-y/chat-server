@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
 import { GetMessageDto } from 'src/shared/dto/chat/request/getMessageDto';
 import { ChatService } from './chat.service';
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @Controller('chat')
 export class ChatController {

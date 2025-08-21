@@ -24,7 +24,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly messageService: MessageService,
     private readonly chatService: ChatService,
-  ) {}
+  ) { }
 
   handleConnection(client: any) {
     this.logger.log(`客户端连接成功: ${client.id}`);
@@ -43,28 +43,41 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`加入聊天房间: ${data.chatId}`);
   }
 
-  // @SubscribeMessage('message')
-  // async handleMessage(
-  //   @MessageBody() data: { chatId: number; senderId: number; content: string },
-  //   @ConnectedSocket() client: any,
-  // ) {
-  //   this.logger.log(`收到消息: ${data.content}`);
-  //   const chat = await this.chatService.findChatById(data.chatId);
-  //   if (!chat) {
-  //     this.logger.error(`会话不存在: ${data.chatId}`);
-  //     throw new Error('会话不存在');
-  //   }
-  //   const newMessage = await this.messageService.createMessage(
-  //     data.content,
-  //     data.senderId,
-  //     chat,
-  //   );
-  //   this.server.to(data.chatId.toString()).emit('message', {
-  //     content: newMessage.content,
-  //     senderId: data.senderId,
-  //     chatId: chat.id,
-  //     createdAt: newMessage.createdAt,
-  //   });
-  //   this.logger.log(`向聊天房间广播消息: ${newMessage.content}`);
-  // }
+  @SubscribeMessage('message')
+  async handleMessage(
+    @MessageBody() data: { chatId: number; senderId: number; content: string; type?: 'text' | 'image' | 'file' | 'video' | 'audio' },
+    @ConnectedSocket() client: any,
+  ) {
+    try {
+      this.logger.log(`收到消息: ${data.content} from ${data.senderId} in chat ${data.chatId}`);
+
+      const chat = await this.chatService.findChatById(data.chatId);
+      if (!chat) {
+        this.logger.error(`会话不存在: ${data.chatId}`);
+        client.emit('error', { message: '会话不存在' });
+        return;
+      }
+
+      const newMessage = await this.messageService.createMessage(
+        data.content,
+        data.senderId,
+        chat,
+        data.type || 'text',  // 默认类型 text
+      );
+
+      this.server.to(data.chatId.toString()).emit('message', {
+        chatId: chat.id,
+        senderId: data.senderId,
+        content: newMessage.content,
+        type: newMessage.type,
+        createdAt: newMessage.createdAt,
+        senderUsername:newMessage.sender.username,
+      });
+
+      this.logger.log(`消息已广播到聊天室: ${data.chatId}`);
+    } catch (error) {
+      this.logger.error(`消息处理失败: ${error.message}`);
+      client.emit('error', { message: '消息发送失败' });
+    }
+  }
 }
