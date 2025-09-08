@@ -17,11 +17,11 @@ export class GetMessageDto {
   @IsOptional()
   @IsInt()
   @IsPositive()
-  page?: number;
+  page: number;
 
   @ApiProperty({ description: '可选的每页消息数量', required: false })
   @IsOptional()
   @IsInt()
   @IsPositive()
-  pageSize?: number;
+  pageSize: number;
 }

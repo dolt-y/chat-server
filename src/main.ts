@@ -24,11 +24,11 @@ async function bootstrap() {
   app.use(cookieParser());
 
   // 跨域配置
-  app.enableCors({
-    origin: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+  // app.enableCors({
+  //   origin: true,
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   credentials: true,
+  // });
 
   // Swagger配置
   const config = new DocumentBuilder()

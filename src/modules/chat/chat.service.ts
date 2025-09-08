@@ -5,6 +5,7 @@ import { ConversationMembers } from '../../shared/entities/ConversationMembers.e
 import { Messages } from '../../shared/entities/Messages.entity';
 import { ChatListItemDto } from 'src/shared/dto/chat/response/ChatListItemDto';
 import { Chats } from 'src/shared/entities/Chats.entity';
+import { ResponseDto } from 'src/shared/dto/common/response.dto';
 @Injectable()
 export class ChatService {
   constructor(
@@ -22,7 +23,7 @@ export class ChatService {
     });
   }
 
-  async getUserChatsOptimized(userId: number): Promise<ChatListItemDto[]> {
+  async getUserChatsOptimized(userId: number): Promise<ResponseDto<ChatListItemDto[]>> {
     // 获取用户参与的所有会话基本信息
     const members = await this.conversationMembersRepository.find({
       where: { userId },
@@ -30,7 +31,9 @@ export class ChatService {
       order: { chat: { updatedAt: 'DESC' } },
     });
 
-    if (!members.length) return [];
+    if (!members.length) {
+      return new ResponseDto(false, '没有会话', []);
+    }
 
     const chatIds = members.map(m => m.chat.id);
 
@@ -40,10 +43,7 @@ export class ChatService {
     // 批量获取未读消息数量
     const unreadCounts = await this.getUnreadCountsBatch(chatIds, userId);
 
-    // 批量获取参与者信息
-    const allParticipants = await this.getChatParticipantsBatch(chatIds, userId);
-
-    return members.map(member => {
+    const chatList = members.map(member => {
       const chatId = member.chat.id;
       return {
         chatId,
@@ -56,10 +56,12 @@ export class ChatService {
         joinedAt: member.joinedAt,
         lastMessage: lastMessages[chatId] || null,
         unreadCount: unreadCounts[chatId] || 0,
-        participants: allParticipants[chatId] || [],
       };
     });
+
+    return new ResponseDto(true, '获取会话列表成功', chatList);
   }
+
 
   /** 批量获取每个会话的最新消息 */
   private async getLastMessagesBatch(chatIds: number[]): Promise<Record<number, any>> {
@@ -67,38 +69,24 @@ export class ChatService {
 
     const lastMessages = await this.messagesRepository
       .createQueryBuilder('m')
-      .innerJoin('m.sender', 'u')
+      .distinctOn(['m.chat_id'])
       .where('m.chat_id IN (:...chatIds)', { chatIds })
-      .andWhere(qb => {
-        const subQuery = qb.subQuery()
-          .select('MAX(m2.created_at)')
-          .from(Messages, 'm2')
-          .where('m2.chat_id = m.chat_id')
-          .getQuery();
-        return 'm.created_at = ' + subQuery;
-      })
+      .orderBy('m.chat_id')
+      .addOrderBy('m.created_at', 'DESC')
       .select([
-        'm.id AS id',
-        'm.chat_id AS chatId',
-        'm.content AS content',
-        'm.type AS type',
-        'm.created_at AS createdAt',
-        'm.sender_id AS senderId',
-        'u.username AS senderUsername',
+        'm.chat_id AS "chatId"',
+        'm.content AS "content"',
+        'm.type AS "type"',
+        'm.created_at AS "createdAt"',
       ])
       .getRawMany();
 
-    return lastMessages.reduce((acc, msg) => {
-      acc[msg.chatId] = {
-        id: msg.id,
-        content: msg.content,
-        type: msg.type,
-        createdAt: msg.createdAt,
-        senderId: msg.senderId,
-        senderUsername: msg.senderUsername,
-      };
-      return acc;
-    }, {} as Record<number, any>);
+    return Object.fromEntries(
+      lastMessages.map(m => [
+        m.chatId,
+        { content: m.content, type: m.type, createdAt: m.createdAt },
+      ]),
+    );
   }
 
   /** 批量获取每个会话的未读消息数量 */

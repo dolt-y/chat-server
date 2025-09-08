@@ -12,15 +12,6 @@ export interface ChatListItemDto {
     content: string;
     type: 'text' | 'image' | 'file' | 'video' | 'audio';
     createdAt: Date;
-    senderId: number;
-    senderUsername: string;
   } | null;
   unreadCount: number;
-  participants?: Array<{
-    userId: number;
-    username: string;
-    avatarUrl: string | null;
-    status: 'online' | 'offline' | 'away' | 'busy' | null;
-    isAdmin: boolean | null;
-  }>;
 }

@@ -11,7 +11,7 @@ import { ApiResponseWithDescriptions } from 'src/shared/constant/response.enum';
 @Controller('auth')
 @ApiResponseWithDescriptions()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiOperation({ summary: '用户注册' })
   @Post('register')

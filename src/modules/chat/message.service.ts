@@ -5,7 +5,7 @@ import { Messages } from '../../shared/entities/Messages.entity';
 import { Chats } from 'src/shared/entities/Chats.entity';
 import { ResponseDto } from '../../shared/dto/common/response.dto';
 import { MessageDto } from 'src/shared/dto/chat/response/MessageDto';
-import { User } from 'src/shared/entities/User.entity';
+import { GetMessageDto } from 'src/shared/dto/chat/request/getMessageDto';
 
 @Injectable()
 export class MessageService {
@@ -37,13 +37,14 @@ export class MessageService {
   /**
    * @description 获取指定会话的消息列表
    */
-  async getMessagesByChatId(
-    chatId: number,
-  ): Promise<ResponseDto<MessageDto[]>> {
+  async getMessagesByChatId(getMessageDto: GetMessageDto): Promise<ResponseDto<MessageDto[]>> {
+    const { chatId, page, pageSize } = getMessageDto;
     const messages = await this.messageRepository.find({
       where: { chatId },
       relations: ['sender'],
       order: { createdAt: 'ASC' },
+      skip: page * pageSize,
+      take: pageSize,
     });
 
     const responseData: MessageDto[] = messages.map((message) => ({
@@ -62,4 +63,5 @@ export class MessageService {
       responseData,
     );
   }
+
 }
