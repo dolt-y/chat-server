@@ -53,6 +53,7 @@ export class MessageService {
       createdAt: message.createdAt || new Date(),
       senderId: message.sender.id,
       senderUsername: message.sender.username,
+      senderAvatar: message.sender.avatarUrl || '',
       isRead: message.isRead,
       type: message.type,
     }));

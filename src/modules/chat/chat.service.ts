@@ -32,7 +32,7 @@ export class ChatService {
     });
 
     if (!members.length) {
-      return new ResponseDto(false, '没有会话', []);
+      return new ResponseDto(true, '没有会话', []);
     }
 
     const chatIds = members.map(m => m.chat.id);

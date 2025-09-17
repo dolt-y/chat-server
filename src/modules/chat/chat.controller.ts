@@ -11,7 +11,7 @@ export class ChatController {
   private readonly logger = new Logger(ChatController.name);
   constructor(private readonly messageService: MessageService, private readonly chatService: ChatService) { }
 
-  @ApiOperation({ summary: '获取会话聊天记录' })
+  @ApiOperation({ summary: '获取聊天记录' })
   @Post('/messages')
   async getMessages(@Body() getMessageDto: GetMessageDto) {
     this.logger.log(`Getting messages for chat ${getMessageDto.page}, ${getMessageDto.pageSize}`);
