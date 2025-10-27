@@ -62,7 +62,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.content,
         data.senderId,
         chat,
-        data.type || 'text',  // 默认类型 text
+        data.type || 'text',
       );
 
       this.server.to(data.chatId.toString()).emit('message', {

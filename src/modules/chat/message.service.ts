@@ -42,7 +42,7 @@ export class MessageService {
     const messages = await this.messageRepository.find({
       where: { chatId },
       relations: ['sender'],
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'DESC' },
       skip: page * pageSize,
       take: pageSize,
     });
