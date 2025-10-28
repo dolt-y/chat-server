@@ -72,7 +72,7 @@ export class ChatService {
       .distinctOn(['m.chat_id'])
       .where('m.chat_id IN (:...chatIds)', { chatIds })
       .orderBy('m.chat_id')
-      .addOrderBy('m.created_at', 'DESC')
+      .addOrderBy('m.created_at', 'ASC')
       .select([
         'm.chat_id AS "chatId"',
         'm.content AS "content"',

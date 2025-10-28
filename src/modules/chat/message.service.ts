@@ -39,14 +39,14 @@ export class MessageService {
    */
   async getMessagesByChatId(getMessageDto: GetMessageDto): Promise<ResponseDto<MessageDto[]>> {
     const { chatId, page, pageSize } = getMessageDto;
+    const skipCount = (page - 1) * pageSize;
     const messages = await this.messageRepository.find({
       where: { chatId },
       relations: ['sender'],
       order: { createdAt: 'DESC' },
-      skip: page * pageSize,
+      skip: skipCount,
       take: pageSize,
     });
-
     const responseData: MessageDto[] = messages.map((message) => ({
       messageId: message.id,
       content: message.content,
