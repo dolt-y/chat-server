@@ -23,6 +23,13 @@ export class ChatService {
     });
   }
 
+  async isUserInChat(chatId: number, userId: number): Promise<boolean> {
+    const member = await this.conversationMembersRepository.findOne({
+      where: { chatId, userId },
+    });
+    return !!member;
+  }
+
   async getUserChatsOptimized(userId: number): Promise<ResponseDto<ChatListItemDto[]>> {
     // 获取用户参与的所有会话基本信息
     const members = await this.conversationMembersRepository
