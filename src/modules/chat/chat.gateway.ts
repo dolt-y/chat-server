@@ -11,7 +11,7 @@ import { Server } from 'socket.io';
 import { MessageService } from './message.service';
 import { ChatService } from './chat.service';
 import { Logger } from '@nestjs/common';
-
+import { SockDto } from 'src/shared/dto/chat/response/sockDto';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -29,7 +29,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(client: any) {
     this.logger.log(`客户端连接成功: ${client.id}`);
   }
-
+  
   handleDisconnect(client: any) {
     this.logger.log(`客户端断开连接: ${client.id}`);
   }
@@ -45,7 +45,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('message')
   async handleMessage(
-    @MessageBody() data: { chatId: number; senderId: number; content: string; type?: 'text' | 'image' | 'file' | 'video' | 'audio' },
+    @MessageBody() data: SockDto,
     @ConnectedSocket() client: any,
   ) {
     try {
@@ -71,7 +71,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         content: newMessage.content,
         type: newMessage.type,
         createdAt: newMessage.createdAt,
-        senderUsername:newMessage.sender.username,
+        senderUsername: newMessage.sender.username,
       });
 
       this.logger.log(`消息已广播到聊天室: ${data.chatId}`);

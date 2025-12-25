@@ -25,11 +25,11 @@ export class ChatService {
 
   async getUserChatsOptimized(userId: number): Promise<ResponseDto<ChatListItemDto[]>> {
     // 获取用户参与的所有会话基本信息
-    const members = await this.conversationMembersRepository.find({
-      where: { userId },
-      relations: ['chat'],
-      order: { chat: { updatedAt: 'DESC' } },
-    });
+    const members = await this.conversationMembersRepository
+      .createQueryBuilder('cm')
+      .leftJoinAndSelect('cm.chat', 'chat')
+      .where('cm.userId = :userId', { userId })
+      .getMany();
 
     if (!members.length) {
       return new ResponseDto(true, '没有会话', []);
@@ -43,6 +43,7 @@ export class ChatService {
     // 批量获取未读消息数量
     const unreadCounts = await this.getUnreadCountsBatch(chatIds, userId);
 
+    // 构建会话列表
     const chatList = members.map(member => {
       const chatId = member.chat.id;
       return {
@@ -59,8 +60,16 @@ export class ChatService {
       };
     });
 
+    // 根据 lastMessage.createdAt 排序（最新的在前面）
+    chatList.sort((a, b) => {
+      const timeA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : 0;
+      const timeB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : 0;
+      return timeB - timeA;
+    });
+
     return new ResponseDto(true, '获取会话列表成功', chatList);
   }
+
 
 
   /** 批量获取每个会话的最新消息 */
