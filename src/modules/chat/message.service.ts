@@ -65,4 +65,24 @@ export class MessageService {
     );
   }
 
+  async markMessagesAsRead(
+    chatId: number,
+    userId: number,
+  ): Promise<ResponseDto<number>> {
+    const updateResult = await this.messageRepository
+      .createQueryBuilder()
+      .update(Messages)
+      .set({ isRead: true })
+      .where('chat_id = :chatId', { chatId })
+      .andWhere('sender_id != :userId', { userId })
+      .andWhere('(is_read = :unread OR is_read IS NULL)', { unread: false })
+      .execute();
+
+    return new ResponseDto<number>(
+      true,
+      '已更新为已读',
+      updateResult.affected ?? 0,
+    );
+  }
+
 }

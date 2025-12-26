@@ -156,4 +156,28 @@ export class ChatService {
       return acc;
     }, {} as Record<number, any[]>);
   }
+
+  async removeChatForUser(chatId: number, userId: number): Promise<ResponseDto<null>> {
+    const membership = await this.conversationMembersRepository.findOne({
+      where: { chatId, userId },
+    });
+
+    if (!membership) {
+      return new ResponseDto<null>(false, '会话不存在或你无权操作');
+    }
+
+    await this.conversationMembersRepository.delete({ chatId, userId });
+
+    const remainingMembers = await this.conversationMembersRepository.count({
+      where: { chatId },
+    });
+
+    if (remainingMembers === 0) {
+      await this.messagesRepository.delete({ chatId });
+      await this.chatsRepository.delete(chatId);
+      return new ResponseDto<null>(true, '会话已删除');
+    }
+
+    return new ResponseDto<null>(true, '已退出该会话');
+  }
 }
